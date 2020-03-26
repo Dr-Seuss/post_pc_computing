@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">hello_android</string>
+    <string name="hello_world_my_name_is_brahan_n_and_this_is_my_app">Hello World!\n My Name is Brahan\n And This is postpc ex0</string>
+</resources>
