@@ -12,11 +12,12 @@
         android:id="@+id/curTask"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:autofillHints=""
         android:ellipsize="start"
         android:ems="10"
-        android:hint="TASK"
         android:gravity="center"
-        android:layout_gravity="center"
+        android:hint="@string/task"
         android:inputType="text"
         android:singleLine="true" />
 
@@ -25,19 +26,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="COMMIT"
+        android:text="@string/commit"
         android:textSize="16sp"
         android:textStyle="normal|bold" />
 
     <TextView
         android:id="@+id/todoList"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Commited"
         android:ems="15"
-        android:textSize="16sp"
-        android:freezesText="true"/>
+        android:freezesText="true"
+        android:text="@string/committed"
+        android:textSize="16sp" />
 </LinearLayout>
 
 
