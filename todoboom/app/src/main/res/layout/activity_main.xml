@@ -1,45 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".MainActivity">
+    <!--    android:autofillHints=""-->
 
 
     <EditText
         android:id="@+id/curTask"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
         android:layout_gravity="center"
-        android:layout_marginTop="250dp"
-        android:autofillHints=""
         android:ellipsize="start"
         android:ems="10"
-        android:gravity="center"
-        android:hint="@string/task"
+        android:hint="task"
         android:inputType="text"
-        android:singleLine="true" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/commit"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:layout_gravity="center"
-        android:text="@string/commit"
+        android:text="commit"
         android:textSize="16sp"
-        android:textStyle="normal|bold" />
+        android:textStyle="normal|bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="@+id/curTask"
+         />
 
-    <TextView
-        android:id="@+id/todoList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:ems="15"
-        android:freezesText="true"
-        android:text="@string/committed"
-        android:textSize="16sp" />
-</LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/task_recycler"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/curTask"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--        android:adjustViewBounds="true"
+            android:maxWidth="48dp"
+            android:maxHeight="48dp"-->

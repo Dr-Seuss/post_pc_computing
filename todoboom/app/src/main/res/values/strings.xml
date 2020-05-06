@@ -1,6 +1,3 @@
 <resources>
-    <string name="app_name">todoBoom</string>
-    <string name="task">TASK</string>
-    <string name="commit">COMMIT</string>
-    <string name="committed">Committed</string>
+    <string name="app_name">TodoBoom</string>
 </resources>
