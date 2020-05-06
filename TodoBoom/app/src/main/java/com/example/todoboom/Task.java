@@ -7,12 +7,12 @@ public class Task implements Parcelable { // parcelable class that let us create
     private String task;
     private boolean isDone;
 
-    public Task(String task) {
+    Task(String task) {
         this.task = task;
         this.isDone = false;
     }
 
-    protected Task(Parcel in) {
+    private Task(Parcel in) {
         task = in.readString();
         isDone = in.readByte() != 0;
     }
@@ -29,15 +29,15 @@ public class Task implements Parcelable { // parcelable class that let us create
         }
     };
 
-    public boolean getTaskStatus() {
+    boolean getTaskStatus() {
         return isDone;
     }
 
-    public void setTaskStatus(boolean mark) {
+    void setTaskStatus(boolean mark) {
         isDone = mark;
     }
 
-    public String getDescription() {
+    String getDescription() {
         return task;
     }
 

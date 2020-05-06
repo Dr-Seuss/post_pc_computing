@@ -1,4 +1,5 @@
 package com.example.todoboom;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.content.Context;
@@ -10,56 +11,53 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.todoboom.R;
-import com.example.todoboom.Task;
-
 import java.util.ArrayList;
 
-public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerViewAdapter.ViewHolder>{
+public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerViewAdapter.ViewHolder> {
     private static ArrayList<Task> taskList;
-    public TaskRecyclerViewAdapter(ArrayList<Task> myList){
+
+    TaskRecyclerViewAdapter(ArrayList<Task> myList) {
         taskList = myList;
     }
 
-    public static ArrayList<Task> getList() {
+    static ArrayList<Task> getList() {
         return taskList;
     }
 
-    public void addItem(Task task){
+    void addItem(Task task) {
         taskList.add(task);
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final Context myContext = parent.getContext();
-        View myView = LayoutInflater.from(myContext).inflate(R.layout.item_single_task, parent, false);
-        final ViewHolder myHolder = new ViewHolder(myView);
+        final Context context = parent.getContext();
+        View myView = LayoutInflater.from(context).inflate(R.layout.item_single_task, parent, false);
+        final ViewHolder holder = new ViewHolder(myView);
 
         myView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if( ! (taskList.get(myHolder.getAdapterPosition())).getTaskStatus()){
-                    Toast.makeText(myContext,"TODO "+ taskList.get(myHolder.getAdapterPosition()).getDescription() + " is now DONE. BOOM!",Toast.LENGTH_SHORT).show();
-                    ImageView myImg = myHolder.getMyImage();
-                    myImg.setImageResource(R.drawable.not_done_task);
-                    taskList.get(myHolder.getAdapterPosition()).setTaskStatus(true);
+                if (!(taskList.get(holder.getAdapterPosition())).getTaskStatus()) {
+                    Toast.makeText(context, "TODO " + taskList.get(holder.getAdapterPosition()).getDescription() + " is now DONE. BOOM!", Toast.LENGTH_SHORT).show();
+                    ImageView myImg = holder.getTaskImg();
+                    myImg.setImageResource(R.drawable.done_task_pic);
+                    taskList.get(holder.getAdapterPosition()).setTaskStatus(true);
                 }
             }
         });
 
-        return myHolder;
+        return holder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Task curTask = taskList.get(position);
-        holder.getMyText().setText(curTask.getDescription());
-
-        ImageView myImg = holder.getMyImage();
-        if(curTask.getTaskStatus()){
+        holder.getTaskData().setText(curTask.getDescription());
+        ImageView myImg = holder.getTaskImg();
+        if (curTask.getTaskStatus()) {
             myImg.setImageResource(R.drawable.done_task_pic);
-        }
-        else{
+        } else {
             myImg.setImageResource(R.drawable.not_done_task);
         }
     }
@@ -70,27 +68,29 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView myText;
-        private ImageView myImage;
-        public ViewHolder(@NonNull View itemView) {
+        private TextView taskData;
+        private ImageView taskImg;
+
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
-            myText = itemView.findViewById(R.id.task_text);
-            myImage = itemView.findViewById(R.id.task_img);
-        }
-        public ImageView getMyImage() {
-            return myImage;
+            taskData = itemView.findViewById(R.id.task_text);
+            taskImg = itemView.findViewById(R.id.task_img);
         }
 
-        public TextView getMyText() {
-            return myText;
+        ImageView getTaskImg() {
+            return taskImg;
         }
 
-        public void setMyImage(ImageView myImage) {
-            this.myImage = myImage;
+        TextView getTaskData() {
+            return taskData;
         }
 
-        public void setMyText(TextView myText) {
-            this.myText = myText;
+        public void setTaskImg(ImageView myImage) {
+            this.taskImg = myImage;
+        }
+
+        public void setTaskData(TextView myText) {
+            this.taskData = myText;
         }
     }
 
