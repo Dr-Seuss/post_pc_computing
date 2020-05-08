@@ -3,17 +3,34 @@ package com.example.todoboom;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Dao;
+import androidx.room.Entity;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.PrimaryKey;
+import androidx.room.Query;
+
+import java.util.List;
+import java.util.Objects;
+
+@Entity(tableName = "task_table")
 public class Task implements Parcelable { // parcelable class that let us create object class
-    private String task;
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "task_content")
+    private String msg;
+    @ColumnInfo(name = "task_status")
     private boolean isDone;
 
-    Task(String task) {
-        this.task = task;
+    Task(@NonNull String msg) {
+        this.msg = msg;
         this.isDone = false;
     }
 
     private Task(Parcel in) {
-        task = in.readString();
+        msg = Objects.requireNonNull(in.readString());
         isDone = in.readByte() != 0;
     }
 
@@ -38,7 +55,7 @@ public class Task implements Parcelable { // parcelable class that let us create
     }
 
     String getDescription() {
-        return task;
+        return msg;
     }
 
     @Override
@@ -48,7 +65,22 @@ public class Task implements Parcelable { // parcelable class that let us create
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(task);
+        dest.writeString(msg);
         dest.writeByte((byte) (isDone ? 1 : 0));
     }
+}
+
+@Dao
+interface TaskDao {
+
+    // allowing the insert of the same word multiple times by passing a
+    // conflict resolution strategy
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insert(Task task);
+
+    @Query("DELETE FROM task_table")
+    void deleteAll();
+
+    @Query("SELECT * from task_table ORDER BY msg ASC")
+    List<Task> getAlphabetizedWords();
 }

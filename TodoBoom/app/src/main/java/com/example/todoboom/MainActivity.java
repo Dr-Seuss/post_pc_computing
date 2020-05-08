@@ -2,15 +2,18 @@ package com.example.todoboom;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 
 import android.os.PersistableBundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,17 +27,19 @@ public class MainActivity extends AppCompatActivity {
     EditText task;
     //    TextView todoList;
     ArrayList<Task> todoList = new ArrayList<>();
+    private static final String TAG = "MyActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "todoList.size() — get task array size ");
+
         setContentView(R.layout.activity_main);
         task = (EditText) findViewById(R.id.curTask);
         commit = findViewById(R.id.commit);
         final Context myView = this;
         final RecyclerView recyclerView = findViewById(R.id.task_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
 
 
         if (savedInstanceState != null) {
@@ -57,7 +62,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AlertDialog diaBox = AskOption();
+                diaBox.show();
 
+                return false;
+            }
+        };
     }
 
 
@@ -67,5 +80,35 @@ public class MainActivity extends AppCompatActivity {
         outState.putParcelableArrayList("key", new ArrayList<Task>(TaskRecyclerViewAdapter.getList()));
         super.onSaveInstanceState(outState);
     }
+
+    private AlertDialog AskOption() {
+        AlertDialog myQuittingDialogBox = new AlertDialog.Builder(this)
+                // set message, title, and icon
+                .setTitle("Delete")
+                .setMessage("Do you want to Delete")
+
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if (!todoList.isEmpty()) {
+                            todoList.remove(todoList.get(0));
+                        }
+                        //your deleting code
+                        dialog.dismiss();
+                    }
+
+                })
+                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+
+                    }
+                })
+                .create();
+
+        return myQuittingDialogBox;
+    }
+//    using it will be:
 
 }
