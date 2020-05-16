@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity(tableName = "task_table")
-public class Task implements Parcelable { // parcelable class that let us create object class
+public class Task implements Parcelable { // parcelable - let us create object class
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "task_content")

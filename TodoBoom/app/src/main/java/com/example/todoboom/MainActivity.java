@@ -4,9 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -21,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     Button commit;
@@ -28,20 +32,17 @@ public class MainActivity extends AppCompatActivity {
     //    TextView todoList;
     ArrayList<Task> todoList = new ArrayList<>();
     private static final String TAG = "MyActivity";
-
+    private  String SIZE_TAG = Integer.valueOf(todoList.size()).toString();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i(TAG, "todoList.size() — get task array size ");
-
+        Log.i(SIZE_TAG, "get task array size ");
         setContentView(R.layout.activity_main);
         task = (EditText) findViewById(R.id.curTask);
         commit = findViewById(R.id.commit);
         final Context myView = this;
         final RecyclerView recyclerView = findViewById(R.id.task_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
         if (savedInstanceState != null) {
             todoList = savedInstanceState.getParcelableArrayList("key");
         }
@@ -62,24 +63,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                AlertDialog diaBox = AskOption();
-                diaBox.show();
 
-                return false;
-            }
-        };
+
+
     }
 
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("key", new ArrayList<Task>(TaskRecyclerViewAdapter.getList()));
-        super.onSaveInstanceState(outState);
-    }
 
     private AlertDialog AskOption() {
         AlertDialog myQuittingDialogBox = new AlertDialog.Builder(this)
@@ -111,4 +100,11 @@ public class MainActivity extends AppCompatActivity {
     }
 //    using it will be:
 
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("key", new ArrayList<Task>(TaskRecyclerViewAdapter.getList()));
+        super.onSaveInstanceState(outState);
+    }
 }

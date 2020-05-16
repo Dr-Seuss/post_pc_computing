@@ -1,5 +1,10 @@
 package com.example.todoboom;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.nfc.Tag;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.content.Context;
@@ -9,12 +14,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerViewAdapter.ViewHolder> {
     private static ArrayList<Task> taskList;
+    private static final String TAG = "MyActivity";
 
     TaskRecyclerViewAdapter(ArrayList<Task> myList) {
         taskList = myList;
@@ -28,11 +37,21 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
         taskList.add(task);
     }
 
+    void removeItem(Task task) {
+        taskList.remove(task);
+    }
+
+    private void update(ArrayList<Task> data) { //TODO check if there is a better way to do it
+        taskList.clear();
+        taskList.addAll(data);
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final Context context = parent.getContext();
-        View myView = LayoutInflater.from(context).inflate(R.layout.item_single_task, parent, false);
+        final View myView = LayoutInflater.from(context).inflate(R.layout.item_single_task, parent, false);
         final ViewHolder holder = new ViewHolder(myView);
 
         myView.setOnClickListener(new View.OnClickListener() {
@@ -44,6 +63,27 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
                     myImg.setImageResource(R.drawable.done_task_pic);
                     taskList.get(holder.getAdapterPosition()).setTaskStatus(true);
                 }
+            }
+        });
+        myView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d(TAG, "START LONG CLICK");
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+                alertBuilder.setTitle("Delete Task");
+                alertBuilder.setMessage("Are you sure you want to delete this Task?");
+                alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "Trying to Delete a task");
+                        taskList.remove(taskList.get(holder.getAdapterPosition()));
+                        update(taskList);
+                    }
+                });
+                alertBuilder.setNegativeButton(android.R.string.no, null);
+                alertBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+                alertBuilder.show();
+                Log.d(TAG, "END LONG CLICK");
+                return true;
             }
         });
 
@@ -78,6 +118,4 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
         }
 
     }
-
-
 }
