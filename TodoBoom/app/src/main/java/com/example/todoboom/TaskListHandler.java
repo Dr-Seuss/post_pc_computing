@@ -23,7 +23,7 @@ class TaskListHandler {
     ArrayList<Task> restore() {
         String saved = sp.getString("SavedTasks", null);
         if (saved != null) {
-            lst = gson.fromJson(saved, new TypeToken<Task>() {
+            lst = gson.fromJson(saved, new TypeToken<ArrayList<Task>>() {
             }.getType());
         }
         return lst;

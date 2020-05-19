@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         task = (EditText) findViewById(R.id.curTask);
         commit = findViewById(R.id.commit);
         final Context myView = this;
-        SaveTasksActivity saveTasksActivity = (SaveTasksActivity) getApplicationContext();
+        final SaveTasksActivity saveTasksActivity = (SaveTasksActivity) getApplicationContext();
         todoList = saveTasksActivity.taskList.restore();
         Log.i(SIZE_TAG, "get task array size ");
         final RecyclerView recyclerView = findViewById(R.id.task_recycler);
@@ -62,7 +62,9 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     task.getText().clear();
                     adapter.addItem(new Task(editTextString));
+                    saveTasksActivity.taskList.save(todoList);
                     adapter.notifyItemInserted(adapter.getItemCount() - 1);
+
                 }
             }
         });

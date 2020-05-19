@@ -1,11 +1,6 @@
 package com.example.todoboom;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.nfc.Tag;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,20 +12,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerViewAdapter.ViewHolder> {
     private static ArrayList<Task> taskList;
     private static final String TAG = "MyActivity";
-    private SaveTasksActivity saveTasksActivity;
+    private SaveTasksActivity saveActivity;
 
-    TaskRecyclerViewAdapter(ArrayList<Task> myList, SaveTasksActivity saveTasksActivity) {
+    TaskRecyclerViewAdapter(ArrayList<Task> myList, SaveTasksActivity saveActivity) {
         taskList = myList;
-        saveTasksActivity = saveTasksActivity;
+        this.saveActivity = saveActivity;
     }
 
     static ArrayList<Task> getList() {
@@ -76,8 +69,8 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
                         Log.d(TAG, "Trying to Delete a task");
                         taskList.remove(taskList.get(holder.getAdapterPosition()));
                         notifyDataSetChanged();
-                        saveTasksActivity.taskList.save(taskList);
-                        saveTasksActivity.taskList.restore(); //todo check
+                        saveActivity.taskList.save(taskList);
+                        taskList = saveActivity.taskList.restore(); //todo check
 
                     }
                 });
