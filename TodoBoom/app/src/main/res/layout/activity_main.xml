@@ -9,13 +9,13 @@
 
 
     <EditText
-        android:id="@+id/curTask"
+        android:id="@+id/curTodo"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_gravity="center"
         android:ellipsize="start"
         android:ems="10"
-        android:hint="task"
+        android:hint="todo"
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:ignore="MissingConstraints" />
@@ -30,14 +30,14 @@
         android:textStyle="normal|bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintRight_toRightOf="@+id/curTask"
+        app:layout_constraintRight_toRightOf="@+id/curTodo"
          />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/task_recycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/curTask"
+        app:layout_constraintBottom_toTopOf="@id/curTodo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
