@@ -2,8 +2,10 @@ package com.example.todoboom;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +26,11 @@ import java.util.Objects;
 public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerViewAdapter.ViewHolder> {
     private static ArrayList<Task> taskList;
     private static final String TAG = "MyActivity";
+    private SaveTasksActivity saveTasksActivity;
 
-    TaskRecyclerViewAdapter(ArrayList<Task> myList) {
+    TaskRecyclerViewAdapter(ArrayList<Task> myList, SaveTasksActivity saveTasksActivity) {
         taskList = myList;
+        saveTasksActivity = saveTasksActivity;
     }
 
     static ArrayList<Task> getList() {
@@ -41,11 +45,6 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
         taskList.remove(task);
     }
 
-    private void update(ArrayList<Task> data) { //TODO check if there is a better way to do it
-        taskList.clear();
-        taskList.addAll(data);
-        notifyDataSetChanged();
-    }
 
     @NonNull
     @Override
@@ -76,7 +75,10 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d(TAG, "Trying to Delete a task");
                         taskList.remove(taskList.get(holder.getAdapterPosition()));
-                        update(taskList);
+                        notifyDataSetChanged();
+                        saveTasksActivity.taskList.save(taskList);
+                        saveTasksActivity.taskList.restore(); //todo check
+
                     }
                 });
                 alertBuilder.setNegativeButton(android.R.string.no, null);

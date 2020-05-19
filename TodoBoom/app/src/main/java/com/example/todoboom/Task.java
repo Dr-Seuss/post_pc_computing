@@ -15,13 +15,13 @@ import androidx.room.Query;
 import java.util.List;
 import java.util.Objects;
 
-@Entity(tableName = "task_table")
+//@Entity(tableName = "task_table")
 public class Task implements Parcelable { // parcelable - let us create object class
-    @PrimaryKey
-    @NonNull
-    @ColumnInfo(name = "task_content")
+//    @PrimaryKey
+//    @NonNull
+//    @ColumnInfo(name = "task_content")
     private String msg;
-    @ColumnInfo(name = "task_status")
+//    @ColumnInfo(name = "task_status")
     private boolean isDone;
 
     Task(@NonNull String msg) {
@@ -70,17 +70,17 @@ public class Task implements Parcelable { // parcelable - let us create object c
     }
 }
 
-@Dao
-interface TaskDao {
-
-    // allowing the insert of the same word multiple times by passing a
-    // conflict resolution strategy
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(Task task);
-
-    @Query("DELETE FROM task_table")
-    void deleteAll();
-
-    @Query("SELECT * from task_table ORDER BY msg ASC")
-    List<Task> getAlphabetizedWords();
-}
+//@Dao
+//interface TaskDao {
+//
+//    // allowing the insert of the same word multiple times by passing a
+//    // conflict resolution strategy
+//    @Insert(onConflict = OnConflictStrategy.IGNORE)
+//    void insert(Task task);
+//
+//    @Query("DELETE FROM task_table")
+//    void deleteAll();
+//
+//    @Query("SELECT * from task_table ORDER BY msg ASC")
+//    List<Task> getAlphabetizedWords();
+//}
