@@ -1,83 +1,104 @@
 package com.example.todoboom;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Date;
 
+import static com.example.todoboom.MainActivity.EMPTY_STRING_ERR;
+
 public class UncompletedTask extends AppCompatActivity {
-    private static final String NULL = "CHECK IF NULL" ;
-    // todo: 1/ edit button  --> after the edit put alertdialog for the SaveState
-// todo: 2/ done button
-    TextView myContent;
+
+
+    TextView taskContent;
     private EditText editText;
+    private String myEdit;
     TextView createDate;
     TextView EditDate;
-    Todo myTodo;
+    Todo curTask;
     SaveTasksActivity saveTasksActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uncompleated_task);
-
-        this.myContent = (TextView) findViewById(R.id.my_content);
+        final String EDIT_MSG = "Task last edit ";
+        final String CREATED_MSG = "Yoc Committed to the Task at ";
+        this.taskContent = (TextView) findViewById(R.id.my_content);
         this.editText = (EditText) findViewById(R.id.editButton);
         this.createDate = (TextView) findViewById(R.id.create_date);
         this.EditDate = (TextView) findViewById(R.id.edit_date);
-        Button bSaveState = (Button) findViewById(R.id.applyButton);
-        Button bMarkDone = (Button) findViewById(R.id.done_button);
+        Button bApplySave = (Button) findViewById(R.id.applyButton);
+        Button bDone = (Button) findViewById(R.id.done_button);
 
         saveTasksActivity = (SaveTasksActivity) getApplicationContext();
 
         Intent intent = getIntent();
         final String idTodo = intent.getStringExtra("todo");
-        myTodo = saveTasksActivity.taskList.getTaskById(idTodo);
-        myTodo.getContent();
-//        myContent.setText(myTodo.getContent().toUpperCase());
 
-        bSaveState.setOnClickListener(new View.OnClickListener() {
+        curTask = saveTasksActivity.taskListHandler.getTaskByIdFromDB(idTodo);
+
+        taskContent.setText(curTask.getContent());
+        Date date = new Date(curTask.getCreateTime());
+        String s = CREATED_MSG + date;
+        createDate.setText(s);
+        date = new Date(curTask.getEditTime());
+        s = EDIT_MSG + date;
+        EditDate.setText(s);
+
+        bApplySave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Tells the change was made
-                myTodo.setCreationTimestamp(System.currentTimeMillis());
-                myTodo.setId(myTodo.getId());
+                curTask.setCreateTime(curTask.getCreateTime());
+                curTask.setId(curTask.getId());
 
-                Date date = new Date(myTodo.getEditTimestamp());
-                String dateStr = "Item edited at : " + date;
-                EditDate.setText(dateStr);
-
+                Date date = new Date(curTask.getEditTime());
+                String s = EDIT_MSG + date;
+                EditDate.setText(s);
 
                 String newContent = editText.getText().toString();
-                if (!newContent.isEmpty()) {
+                if(newContent.isEmpty()){
+                    Toast.makeText(UncompletedTask.this, EMPTY_STRING_ERR, Toast.LENGTH_LONG).show();
+                }else{
                     editText.getText().clear();
-                    myContent.setText(newContent.toUpperCase());
-                    myTodo.setContent(newContent);
-                    myTodo.setCreationTimestamp(System.currentTimeMillis());
-                    date = new Date(myTodo.getEditTimestamp());
-                    dateStr = "Item edited at : " + date;
-                    EditDate.setText(dateStr);
-                    notifyAll();
-                    Toast.makeText(UncompletedTask.this, "The Task have been saved Successfully", Toast.LENGTH_SHORT).show();
+                    taskContent.setText(newContent.toUpperCase());
+                    curTask.setContent(newContent);
+                    curTask.setEditTime(System.currentTimeMillis());
+                    date = new Date(curTask.getEditTime());
+                    s =  EDIT_MSG + date;
+                    EditDate.setText(s);
+
+                    saveTasksActivity.taskListHandler.editTaskInDB(curTask);
+                    Toast.makeText(UncompletedTask.this, "The Task Have Been Edited Successfully",Toast.LENGTH_SHORT).show();
                 }
+                resumeToMainActivity();
             }
         });
 
-        bMarkDone.setOnClickListener(new View.OnClickListener() {
+        bDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                myTodo.setTaskStatus(true);
-                Toast.makeText(UncompletedTask.this, "TODO " + myTodo.getContent() + " is now DONE. BOOM!", Toast.LENGTH_SHORT).show();
-                notifyAll();
+                curTask.setDone(true);
+                curTask.setEditTime(System.currentTimeMillis());
+                saveTasksActivity.taskListHandler.editTaskInDB(curTask);
+                Toast.makeText(UncompletedTask.this, "You Completed" + curTask.getContent(),Toast.LENGTH_SHORT).show();
+                resumeToMainActivity();
             }
         });
+
+    }
+
+    public void resumeToMainActivity(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
