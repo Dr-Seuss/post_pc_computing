@@ -12,51 +12,64 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class CompletedTask extends AppCompatActivity {
-    TextView content;
-    Todo todo;
+
+    TextView taskContent;
+    Todo curTodo;
     SaveTasksActivity saveTasksActivity;
 
-    //TODO: reset button -> set the task as notdone
-    //TODO: delete button --> total delete --> including the DB
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compleated_task);
 
-        this.content = (TextView) findViewById(R.id.curTodo);
-        Button bResetTask = (Button) findViewById(R.id.reset_task);
+        this.taskContent = (TextView) findViewById(R.id.edit_content);
+        Button bReset = (Button) findViewById(R.id.reset_task);
         Button bDeleteTask = (Button) findViewById(R.id.delete_task);
 
         saveTasksActivity = (SaveTasksActivity) getApplicationContext();
 
         Intent intent = getIntent();
-        final String taskID = intent.getStringExtra("todo");
+        final String idTodo = intent.getStringExtra("todo");
+        curTodo = saveTasksActivity.taskListHandler.getTaskByIdFromDB(idTodo);
+        taskContent.setText(curTodo.getContent().toUpperCase());
 
-
-        bResetTask.setOnClickListener(new View.OnClickListener() {
+        bReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Todo todo = new Todo(content.toString());
+                onClickResetTask();
+                resumeToMainActivity();
             }
         });
 
         bDeleteTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CompletedTask.this);
-                alertBuilder.setTitle("Delete Task");
-                alertBuilder.setMessage("Are you sure you want to delete this Task?");
-                alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(CompletedTask.this, "The Task Deleted Successfully", Toast.LENGTH_SHORT).show();
-
-
-                    }
-                });
-                alertBuilder.show();
+                onClickDeleteTask();
+                resumeToMainActivity();
             }
         });
     }
 
+    public void onClickResetTask() {
+        curTodo.setDone(false);
+        saveTasksActivity.taskListHandler.editTaskInDB(curTodo);
+        Toast.makeText(CompletedTask.this, curTodo.getContent() + " been RESET !", Toast.LENGTH_SHORT).show();
+    }
 
+    public void onClickDeleteTask() {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CompletedTask.this);
+        alertBuilder.setTitle("Delete Task");
+        alertBuilder.setMessage("Are you sure you want to delete this Task?");
+        alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                saveTasksActivity.taskListHandler.deleteTaskFromDB(curTodo);
+                Toast.makeText(CompletedTask.this, "The Task Deleted Successfully", Toast.LENGTH_SHORT).show();
+            }
+        });
+        alertBuilder.show();
+    }
+    public void resumeToMainActivity(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 }

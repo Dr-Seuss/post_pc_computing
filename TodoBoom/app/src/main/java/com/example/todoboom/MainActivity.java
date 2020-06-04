@@ -1,16 +1,13 @@
 package com.example.todoboom;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,46 +17,53 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
-    Button commit;
-    EditText task;
-    ArrayList<Todo> todoList = new ArrayList<>();
-    private String SIZE_TAG = Integer.valueOf(todoList.size()).toString();
-    TaskRecyclerViewAdapter recyclerViewAdapter;
+    public static  final String EMPTY_STRING_ERR = "You can't create an empty TODO item, oh silly !";
+
+    private EditText editText;
+    ArrayList<Todo> lst = new ArrayList<>();
+    Adapter adapter;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        task = (EditText) findViewById(R.id.curTodo);
-        commit = findViewById(R.id.commit);
-        final Context myView = this;
+
+        this.editText = (EditText) findViewById(R.id.curTodo);
+        Button button = (Button) findViewById(R.id.commit);
+
+        final Context curView = this;
         final SaveTasksActivity saveTasksActivity = (SaveTasksActivity) getApplicationContext();
-        Log.i(SIZE_TAG, "get task array size ");
-        final RecyclerView recyclerView = findViewById(R.id.task_recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference colRef = db.collection("todos");
+
+        final RecyclerView rv = (RecyclerView) findViewById(R.id.task_recycler);
+        rv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+
         if (savedInstanceState != null) {
-            todoList = savedInstanceState.getParcelableArrayList("key");
+            editText.setText(savedInstanceState.getString("myText"));
         }
 
-        recyclerViewAdapter = new TaskRecyclerViewAdapter(todoList, saveTasksActivity);
-        recyclerView.setAdapter(recyclerViewAdapter);
-        saveTasksActivity.taskList.adapter = recyclerViewAdapter;
+        adapter = new Adapter(lst, saveTasksActivity);
+        rv.setAdapter(adapter);
+        saveTasksActivity.taskListHandler.adapter = adapter;
 
-        commit.setOnClickListener(new View.OnClickListener() {
+
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String editTextString = task.getText().toString();
-                if (editTextString.isEmpty()) {
-                    Toast.makeText(myView, "You can't create an empty TODO item, oh silly !", Toast.LENGTH_LONG).show();
+                String taskInput = editText.getText().toString();
+                if (taskInput.isEmpty()) {
+                    Toast.makeText(curView, EMPTY_STRING_ERR, Toast.LENGTH_LONG).show();
                 } else {
-                    task.getText().clear();
-                    Todo nTodo =new Todo(editTextString);
-                    saveTasksActivity.taskList.addTodo(nTodo);
-                    recyclerViewAdapter.setTaskList(todoList);
-                    recyclerViewAdapter.notifyDataSetChanged();
+                    editText.getText().clear();
+                    onClickCreateTask(saveTasksActivity, taskInput);
                 }
             }
         });
@@ -68,16 +72,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        final SaveTasksActivity app = (SaveTasksActivity) getApplicationContext();
-        todoList = app.taskList.getTaskList();
-        recyclerViewAdapter.setTaskList(todoList);
-        recyclerViewAdapter.notifyDataSetChanged();
+        final SaveTasksActivity saveTasksActivity = (SaveTasksActivity) getApplicationContext();
+        lst = saveTasksActivity.taskListHandler.getDataFromDB();
+        saveTasksActivity.taskListHandler.updateData();
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString("myText", editText.getText().toString());
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("key", new ArrayList<>(recyclerViewAdapter.getList()));
+    }
+
+    public void onClickCreateTask(SaveTasksActivity saveTasksActivity, String taskInput) {
+        saveTasksActivity.taskListHandler.addTaskToDB(new Todo(taskInput, false));
+        saveTasksActivity.taskListHandler.updateData();
+    }
+
+    public void onClickUncompletedTask(String id) {
+        Intent intent = new Intent(this, UncompletedTask.class);
+        intent.putExtra("todo", id);
+        startActivity(intent);
     }
 
     public void onClickCompletedTask(String id) {
@@ -86,90 +100,48 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+     class Adapter extends RecyclerView.Adapter<Adapter.Holder> {
+        private ArrayList<Todo> taskList;
 
-    public void onClickUncompletedTask(String id) {
-        Intent intent = new Intent(this, UncompletedTask.class);
-        intent.putExtra("todo", id);
-        startActivity(intent);
-    }
-
-    class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerViewAdapter.ViewHolder> {
-
-        private ArrayList<Todo> todoList;
-        private static final String TAG = "MyActivity";
-        private SaveTasksActivity saveActivity;
-
-        void setTaskList(ArrayList<Todo> todoList) {
-            this.todoList = todoList;
+        Adapter(ArrayList<Todo> taskList, SaveTasksActivity act) {
+            this.taskList = taskList;
         }
 
-        TaskRecyclerViewAdapter(ArrayList<Todo> myList, SaveTasksActivity saveActivity) {
-            todoList = myList;
-            this.saveActivity = saveActivity;
+        ArrayList getTaskList() {
+            return taskList;
         }
 
-        ArrayList<Todo> getList() {
-            return todoList;
+        void setTaskList(ArrayList<Todo> newLst) {
+            taskList = newLst;
         }
-
-        void addItem(Todo todo) {
-            todoList.add(todo);
-        }
-
-        void removeItem(Todo todo) {
-            todoList.remove(todo);
-        }
-
 
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            final Context context = parent.getContext();
-            final View myView = LayoutInflater.from(context).inflate(R.layout.item_single_task, parent, false);
-            final ViewHolder holder = new ViewHolder(myView);
-
-            myView.setOnClickListener(new View.OnClickListener() {
+        public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            final Context myContext = parent.getContext();
+            View rvView = LayoutInflater.from(myContext).inflate(R.layout.item_single_task, parent, false);
+            final Holder rvHolder = new Holder(rvView);
+            rvView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Todo cur = (todoList.get(holder.getAdapterPosition()));
-                    if (cur.getTaskStatus()) {
+                    Todo cur = taskList.get(rvHolder.getAdapterPosition());
+                    if (cur.getDone()) {
                         onClickCompletedTask(cur.getId());
                     } else {
+
                         onClickUncompletedTask(cur.getId());
                     }
                 }
             });
-            myView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    Log.d(TAG, "START LONG CLICK");
-                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
-                    alertBuilder.setTitle("Delete Task");
-                    alertBuilder.setMessage("Are you sure you want to delete this Task?");
-                    alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            Log.d(TAG, "Trying to Delete a task");
-                            todoList.remove(todoList.get(holder.getAdapterPosition()));
-                            notifyDataSetChanged();
-                        }
-                    });
-                    alertBuilder.setNegativeButton(android.R.string.no, null);
-                    alertBuilder.setIcon(android.R.drawable.ic_dialog_alert);
-                    alertBuilder.show();
-                    Log.d(TAG, "END LONG CLICK");
-                    return true;
-                }
-            });
-
-            return holder;
+            return rvHolder;
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            Todo curTodo = todoList.get(position);
-            holder.taskData.setText(curTodo.getDescription());
-            ImageView myImg = holder.taskImg;
-            if (curTodo.getTaskStatus()) {
+        public void onBindViewHolder(@NonNull Holder holder, int position) {
+            Todo myTodo = taskList.get(position);
+            holder.getTextContent().setText(myTodo.getContent());
+            ImageView myImg = holder.getTaskImage();
+            if (myTodo.getDone()) {
                 myImg.setImageResource(R.drawable.done_task_pic);
             } else {
                 myImg.setImageResource(R.drawable.not_done_task);
@@ -178,20 +150,29 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return todoList.size();
+            return getTaskList().size();
         }
 
-        private class ViewHolder extends RecyclerView.ViewHolder {
-            final TextView taskData;
-            final ImageView taskImg;
-            Context context;
+        private class Holder extends RecyclerView.ViewHolder {
+            private TextView textView;
+            private ImageView taskImage;
 
-            ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                taskData = itemView.findViewById(R.id.task_text);
-                taskImg = itemView.findViewById(R.id.task_img);
+            Holder(@NonNull View view) {
+                super(view);
+                textView = view.findViewById(R.id.task_text);
+                taskImage = view.findViewById(R.id.task_img);
+            }
+
+            ImageView getTaskImage() {
+                return taskImage;
+            }
+
+            TextView getTextContent() {
+                return textView;
             }
 
         }
+
     }
+
 }

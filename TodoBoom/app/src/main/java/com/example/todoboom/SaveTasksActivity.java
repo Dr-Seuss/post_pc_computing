@@ -1,12 +1,29 @@
+//package com.example.todoboom;
+//
+//import android.app.Application;
+//
+//public class SaveTasksActivity extends Application {
+//
+//    TaskListHandler tdLst;
+//
+//    public void onCreate(){
+//
+//        super.onCreate();
+//        tdLst = new TaskListHandler(this);
+//
+//    }
+//
+//}
 package com.example.todoboom;
-
 import android.app.Application;
 
-public class SaveTasksActivity extends Application {
-     TaskListHandler taskList;
+import java.util.ArrayList;
 
-    public void onCreate() {
+public class SaveTasksActivity extends Application {
+    TaskListHandler taskListHandler;
+    public void onCreate(){
         super.onCreate();
-        taskList = new TaskListHandler(this);
+        taskListHandler = new TaskListHandler();
     }
+
 }

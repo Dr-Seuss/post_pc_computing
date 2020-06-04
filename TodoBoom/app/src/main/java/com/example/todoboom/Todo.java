@@ -1,110 +1,60 @@
 package com.example.todoboom;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+public class Todo {
 
-import java.util.Objects;
-
-public class Todo implements Parcelable {
     private String content;
-    private long creationTimestamp;
-    private long editTimestamp;
-    private String id;
     private boolean isDone;
+    private String id;
+    private long createTime;
+    private long editTime;
 
-    Todo() {
+
+    // But why ?
+    public Todo(){}
+
+
+    Todo(String todoItem, boolean isDone){
+        this.content = todoItem;
+        this.isDone = isDone;
     }
 
-    Todo(String content) {
-        this.content = content;
-        creationTimestamp = System.currentTimeMillis();
-        editTimestamp = creationTimestamp;
-        this.isDone = false;
-    }
-
-    private Todo(Parcel in) {
-        content = Objects.requireNonNull(in.readString());
-        isDone = in.readByte() != 0;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public void setCreationTimestamp(long creationTimestamp) {
-        this.creationTimestamp = creationTimestamp;
-    }
-
-    public long getEditTimestamp() {
-        return editTimestamp;
-    }
+    // Getters
 
     public String getContent() {
         return content;
     }
 
-    public void setEditTimestamp(long editTimestamp) {
-        this.editTimestamp = editTimestamp;
-    }
-
-    public static final Creator<Todo> CREATOR = new Creator<Todo>() {
-        @Override
-        public Todo createFromParcel(Parcel in) {
-            return new Todo(in);
-        }
-
-        @Override
-        public Todo[] newArray(int size) {
-            return new Todo[size];
-        }
-    };
-
-    boolean getTaskStatus() {
+    public boolean getDone(){
         return isDone;
     }
 
-    void setTaskStatus(boolean mark) {
-        isDone = mark;
+    public String getId(){ return id;}
+
+    public long getCreateTime() {
+        return createTime;
     }
 
-    String getDescription() {
-        return content;
+    public long getEditTime(){
+        return editTime;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    // Setters
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(content);
-        dest.writeByte((byte) (isDone ? 1 : 0));
+    public void setDone(boolean done) {
+        this.isDone = done;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setId(String id){ this.id = id;}
+
+    public void setCreateTime (long createTime){
+        this.createTime = createTime;
     }
 
-    public String getId() {
-        return this.id;
+    public void setEditTime(long editTime) {
+        this.editTime = editTime;
     }
-
 }
-
-//@Dao
-//interface TaskDao {
-//
-//    // allowing the insert of the same word multiple times by passing a
-//    // conflict resolution strategy
-////    @Insert(onConflict = OnConflictStrategy.IGNORE)
-//    void insert(Task task);
-//
-////    @Query("DELETE FROM task_table")
-//    void deleteAll();
-//
-////    @Query("SELECT * from task_table ORDER BY msg ASC")
-//    List<Task> getAlphabetizedWords();
-//    HashMap<String, Task> myHash = new HashMap<String, Task>();
-//
-//}
