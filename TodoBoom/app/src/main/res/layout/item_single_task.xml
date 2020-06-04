@@ -6,7 +6,7 @@
     android:layout_height="80dp"
 
     >
-<!--TODO if the task ended Vi photo, else a grey dot or something-->
+<!--TODO if the todo ended Vi photo, else a grey dot or something-->
 <!--    TODO: HEight must a number  because of the scrolling-->
     <ImageView
         android:id="@+id/task_img"

@@ -1,37 +1,135 @@
 package com.example.todoboom;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import android.content.Context;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
 class TaskListHandler {
-    private SharedPreferences sp;
-    private ArrayList<Task> lst;
-    private Gson gson;
+    private ArrayList<Todo> lst;
+    MainActivity.TaskRecyclerViewAdapter adapter;
+    public DBHandler fb;
 
     TaskListHandler(Context context) {
-        sp = PreferenceManager.getDefaultSharedPreferences(context);
-        lst = new ArrayList<>();
-        gson = new Gson();
+        lst = new ArrayList<Todo>();
+        Query();
+        fb = new DBHandler();
     }
 
-    ArrayList<Task> restore() {
-        String saved = sp.getString("SavedTasks", null);
-        if (saved != null) {
-            lst = gson.fromJson(saved, new TypeToken<ArrayList<Task>>() {
-            }.getType());
-        }
+    void setTaskList(ArrayList<Todo> list) {
+        lst = list;
+    }
+
+    ArrayList<Todo> getTaskList() {
         return lst;
     }
 
-    void save(ArrayList<Task> tasks) {
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("SavedTasks", gson.toJson(tasks));
-        editor.apply();
+    Todo getTaskById(String id) {
+        return fb.getTaskByIdFromDB(id);    }
+
+    void addTodo(Todo todo) {
+        fb.addTodoToDB(todo);
+        lst.add(todo);
+        adapter.setTaskList(lst);
+        adapter.notifyDataSetChanged();
+
+    }
+
+    void deleteTodo(Todo todo) {
+        fb.deleteTodoFromDB(todo);
+        lst.remove(todo);
+        adapter.setTaskList(lst);
+        adapter.notifyDataSetChanged();
+    }
+
+    void editTodo(Todo newTodo) {
+
+        for (int i = 0; i < lst.size(); i++) {
+
+            Todo todo = lst.get(i);
+
+            if (todo.getId().equals(newTodo.getId())) {
+
+                lst.set(i, newTodo); // At the same place
+                adapter.setTaskList(lst);
+                adapter.notifyDataSetChanged();
+
+                break;
+
+            }
+        }
+        fb.editTodoInDB(newTodo);
+    }
+
+
+    private void Query() {
+        // Get the instance of Cloud Firestore
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Get the todos collection reference
+        CollectionReference tdLstCollectionRef = db.collection("todos");
+
+        // Listen for todos
+        tdLstCollectionRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+
+                    Log.w("Firestore", "Listen failed.", e);
+                    return;
+                }
+
+                if (queryDocumentSnapshots == null) {
+
+                    Log.d("Firestore", "Current data: null");
+
+                } else {
+
+                    // Update the list (restore)
+                    lst.clear();
+
+                    for (QueryDocumentSnapshot myDoc : queryDocumentSnapshots) {
+                        Todo todo = myDoc.toObject(Todo.class);
+                        lst.add(todo);
+                    }
+
+                    adapter.setTaskList(lst);
+                    adapter.notifyDataSetChanged();
+
+                    Log.d("Firestore", "Current data: " + queryDocumentSnapshots);
+
+                }
+            }
+        });
+
+        tdLstCollectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                adapter.setTaskList(lst);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        tdLstCollectionRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                adapter.setTaskList(lst);
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 }

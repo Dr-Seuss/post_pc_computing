@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "9543827037",
+    "firebase_url": "https://postpc-todoboom-cec03.firebaseio.com",
+    "project_id": "postpc-todoboom-cec03",
+    "storage_bucket": "postpc-todoboom-cec03.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:9543827037:android:b7ae3656011331f85d97b4",
+        "android_client_info": {
+          "package_name": "com.example.todoboom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "9543827037-li0i10t4jacjre3oudjl5ecelhvd3b6a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGRtI6fv2xa82RIFpE2jInUJsqK9z1UE4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "9543827037-li0i10t4jacjre3oudjl5ecelhvd3b6a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
