@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="55dp"
         android:layout_marginBottom="55dp"
-        android:text="home location!"
+        android:text="@string/home_location"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -21,7 +21,7 @@
         android:id="@+id/location_longitude"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="location longitude!"
+        android:text="@string/location_longitude"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/current_home_location" />
@@ -30,7 +30,7 @@
         android:id="@+id/location_latitude"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="location_latitude!"
+        android:text="@string/location_latitude"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/location_longitude" />
@@ -39,7 +39,7 @@
         android:id="@+id/tracking_accuracy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="tracking_accuracy!"
+        android:text="@string/tracking_accuracy"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/location_latitude" />
@@ -49,7 +49,7 @@
         android:id="@+id/start_tracking_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="START"
+        android:text="@string/start"
         android:visibility="visible"
 
         app:layout_constraintBottom_toBottomOf="parent"
@@ -63,29 +63,30 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:text="STOP"
+        android:text="@string/stop"
         android:visibility="invisible"
 
         app:layout_constraintEnd_toEndOf="@id/start_tracking_location"
         app:layout_constraintTop_toBottomOf="@id/start_tracking_location" />
 
-<!--    <Button-->
-<!--        android:id="@+id/set_sms"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="SET SMS"-->
+    <Button
+        android:id="@+id/set_sms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/set_sms"
+        android:visibility="visible"
 
-<!--        app:layout_constraintEnd_toEndOf="@id/set_home_location"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/set_home_location" />-->
+        app:layout_constraintEnd_toEndOf="@id/set_home_location"
+        app:layout_constraintTop_toBottomOf="@id/set_home_location" />
 
-<!--    <Button-->
-<!--        android:id="@+id/send_sms"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="SEND SMS"-->
+    <Button
+        android:id="@+id/send_sms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/send_sms"
 
-<!--        app:layout_constraintEnd_toEndOf="@id/reset_home_location"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/reset_home_location" />-->
+        app:layout_constraintEnd_toEndOf="@id/reset_home_location"
+        app:layout_constraintTop_toBottomOf="@id/reset_home_location" />
 
     <Button
         android:id="@+id/set_home_location"
@@ -94,7 +95,7 @@
         android:gravity="center"
         android:visibility="invisible"
 
-        android:text="SET"
+        android:text="@string/set"
         app:layout_constraintBottom_toBottomOf="@+id/start_tracking_location"
         app:layout_constraintRight_toLeftOf="@+id/start_tracking_location"
         />
@@ -107,7 +108,7 @@
         android:gravity="center"
         android:visibility="invisible"
 
-        android:text="RESET"
+        android:text="@string/reset"
         app:layout_constraintBottom_toBottomOf="@+id/start_tracking_location"
         app:layout_constraintLeft_toRightOf="@+id/start_tracking_location" />
 

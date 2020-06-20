@@ -10,7 +10,6 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
@@ -37,9 +36,11 @@ class LocationTracker(var context: Context) {
             override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
                 TODO("Not yet implemented")
             }
+
             override fun onProviderEnabled(provider: String?) {
                 TODO("Not yet implemented")
             }
+
             override fun onProviderDisabled(provider: String?) {
                 TODO("Not yet implemented")
             }
@@ -53,7 +54,8 @@ class LocationTracker(var context: Context) {
     fun startTracking() {
         isTracking = true
 
-        if (ContextCompat.checkSelfPermission(context,
+        if (ContextCompat.checkSelfPermission(
+                context,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
