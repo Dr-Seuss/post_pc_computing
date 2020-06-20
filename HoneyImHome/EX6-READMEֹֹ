@@ -1,0 +1,19 @@
+shortly: We can add a broadcastreciver one of the arguments that will indicate if the the other person indeed got the msg.
+When we call SendTextMessage :
+sendTextMessage(String destinationAddress, String scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent, long messageId)
+we will add PendingIntent argument, it is a broadcast that indicate if the msg is successfuly sent.meaning its check if the sms transmission, by checking
+its value we will be able to know if it have been sent "right".
+The code will look like:
+PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0, new Intent(DELIVERED), PendingIntent.FLAG_NO_CREATE); deliverActivity = new BroadcastReceiver() {
+@Override public void onReceive(Context arg0, Intent arg1) {
+switch (getResultCode()) { 
+case Activity.RESULT_OK: Toast.makeText(getBaseContext(),
+"SMS delivered", Toast.LENGTH_LONG).show();
+finishActivity(); break; case Activity.RESULT_CANCELED: Toast.makeText(getBaseContext(),
+"SMS not delivered", Toast.LENGTH_LONG).
+show();
+finishActivity();
+break;
+  }
+}
+the result Activity.RESULT_OK means we successeded, any other will indicate an error.
